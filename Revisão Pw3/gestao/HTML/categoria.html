@@ -26,47 +26,51 @@
                 <!-- tabela -->
                 <table class="table">
                     <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">NOME</th>
-                        <th scope="col">QTD. PRODUTO</th>
-                        <th scope="col">CONTROLES</th>
-                      </tr>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">NOME</th>
+                            <th scope="col">QTD. PRODUTO</th>
+                            <th scope="col">CONTROLES</th>
+                        </tr>
                     </thead>
-                    <tbody class="table-group-divider">
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Camisas</td>
-                        <td>18</td>
-                        <td><button class="btn btn-warning"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger"><i class="bi bi-trash-fill"></i></button></td>
-                      </tr>
+                    <tbody class="table-group-divider" id="tabela">
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Camisas</td>
+                            <td>18</td>
+                            <td><button class="btn btn-warning"><i class="bi bi-pencil-square"></i></button>
+                                <button class="btn btn-danger"><i class="bi bi-trash-fill"></i></button>
+                            </td>
+                        </tr>
                     </tbody>
-                  </table>
+                </table>
                 <!-- tabela -->
             </div>
             <div class="col-3 offset-1 card bg-light p-3">
-                <h3 id="acao">
-                    <i class="bi bi-plus-circle-fill"></i>
-                    Nova Categoria
-                </h3>
-                <div class="form-group mt-1">
-                    <label for="id">ID</label>
-                    <input type="readonly" id="id_catgegoria" class="form-control" readonly>
-                </div>
-                <div class="form-group mt-1">
-                    <label for="id">NOME</label>
-                    <input type="readonly" id="nm_catgegoria" class="form-control" readonly>
-                </div>
-                <div class="form-group mt-1">
-                    <button class="btn btn-danger">Adicionar</button>
-                </div>
+                <form id="FormCategoria">
+                    <h3 id="acao">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        Nova Categoria
+                    </h3>
+                    <div class="form-group mt-1">
+                        <label for="id">ID</label>
+                        <input type="number" id="id_catgegoria" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-1">
+                        <label for="id">NOME</label>
+                        <input type="text" id="nm_catgegoria" class="form-control" readonly>
+                    </div>
+                    <div class="form-group mt-1">
+                        <button class="btn btn-danger">Adicionar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+        ></script>
+        <script src="../JavaScript/Categoria.js"></script>
 </body>
 
 </html>

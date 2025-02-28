@@ -7,8 +7,18 @@ $input = json_decode(file_get_contents("php://input"),true);
 $id = $_GET['id_categoria'] ?? null;
 
 switch ($method) {
+    //Consulta no Banco
     case 'GET':
-        echo "é get";
+        $sql = 'SELECT * FROM tb_categoria ';
+        if($id>0){
+            $sql .= 'WHERE id_categoria = ' . $id;
+        }
+        $resultado = $conexao->query($sql);
+        $dados = [];
+        while($linha = $resultado->fetch_object()){
+            $dados[] = $linha;
+        }
+        echo json_encode($resultado);
         break;
     case 'POST':
         // Cadastro no banco
