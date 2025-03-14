@@ -6,14 +6,14 @@ form.addEventListener('submit', function (e) {
     e.preventDefault(); //Interrompe o carregamento da página
 
     var metodo = 'POST';
-    var url = 'categoria.php';
-    var dados = JSON.stringify([{ nome: document.getElementById('nm_categoria').value, id: document.getElementById('id_categoria').value }]);
+    var url = '../php/categoria.php';
+    var dados = JSON.stringify([{ nm_categoria: document.getElementById('nm_categoria').value, id_categoria: document.getElementById('id_categoria').value }]);
     var btn = document.getElementById('btn'); //Botão de envio do formulário
 
     if (btn.innerHTML == 'Atualizar') {
-        url += '?id='+document.getElementById('id_categoria').value;
+        url += '?id_categoria='+document.getElementById('id_categoria').value;
         metodo = 'PUT';
-        dados = JSON.stringify([{ nome: document.getElementById('nm_categoria').value }]);
+        dados = JSON.stringify([{ nm_categoria: document.getElementById('nm_categoria').value, id_categoria: document.getElementById('id_categoria').value}]);
     }
 
     fetch(url, {
@@ -22,54 +22,75 @@ form.addEventListener('submit', function (e) {
         body: dados
     })
         .then(resposta => resposta.json())
-        .then(dados => console.log(dados))
+        .then(function(dados){
         Tabela();
         alert('Categoria cadastrada com sucesso!');
+})
+
+//Ações após envio
+btn.innerHTML = "Adicionar";
+btn.classList.remove('btn-primary');
+btn.classList.add('btn-danger');
+document.getElementById('nm_categoria').value = "";
+document.getElementById('id_categoria').value = "";
+
 });
 
 
 
-function Tabela() {
-    fetch('../PHP/categoria.php')
-        .then(resposta => resposta.json())
-        .then(function (dados) {
-            var registros = '';
-            for (var i = 0; i < dados.length; i++) {
-                registros += `
-            <tr>
-                <th scope="row">`+ dados[i].id_produto`</th>
-                <td>`+ dados[i].nm_produto`</td>
+
+
+function Tabela(){
+
+    fetch('../php/categoria.php')
+    .then(resposta => resposta.json())
+    .then(function(dados){
+        var registros = "";
+        console.table(dados);
+        for(var i=0; i<dados.length; i++){
+            registros += `
+                <tr>
+                <th scope="row">`+dados[i].id_categoria+`</th>
+                <td>`+dados[i].nm_categoria+`</td>
                 <td>0</td>
-                <td><button class="btn btn-warning"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger excluir" onClick="Excluir(`+ dados[i].id_categoria`"><i class="bi bi-trash-fill"></i></button></td>
+                <td>
+                    <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_categoria+`)"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-danger excluir" onclick="Excluir(`+dados[i].id_categoria+`)"><i class="bi bi-trash-fill"></i></button>
+                </td>
             </tr>`;
-            }
-            document.getElementById('tabela').innerHTML = registros;
-        });
+        }
+        document.getElementById('tabela').innerHTML = registros;
+    });    
+
+    
+}
 
     //Ação do botão excluir
 
-    function Excluir(id) {
-        fetch('categoria.php', {
-            method: 'DELETE'
-        })
-            .then(resposta => resposta.json())
-            .then(dados => console.log(dados));
-    }
-
-    function Atualizar(id) {
-        fetch('categoria.php?id=' + id, {
+    function Atualizar(id_categoria){
+        fetch('../php/categoria.php?id_categoria='+id_categoria,{
             method: 'GET'
         })
-            .then(resposta => resposta.json())
-            .then(function (dados) {
-                var id = document.getElementById('id_categoria');  
-                var nome = document.getElementById('nm_categoria');
-                var btn = document.getElementById('btn');
-
-                
-
-            });
+        .then(resposta => resposta.json())
+        .then(function(dados){
+            var id = document.getElementById('id_categoria');
+            var nome = document.getElementById('nm_categoria');
+            var btn = document.getElementById('btn');
+    
+            btn.innerHTML = "Atualizar";
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-primary');
+    
+            id.value = dados[0].id_categoria;
+            nome.value = dados[0].nm_categoria;
+            nome.focus();
+        });
     }
-
-}
+    
+    function Excluir(id_categoria){
+        fetch('../php/categoria.php?id_categoria='+id_categoria,{
+            method: 'DELETE'
+        })
+        .then(resposta => resposta.json())
+        .then(dados => Tabela());
+    }

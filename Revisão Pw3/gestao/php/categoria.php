@@ -11,18 +11,18 @@ switch ($method) {
     case 'GET':
         $sql = 'SELECT * FROM tb_categoria ';
         if($id>0){
-            $sql .= 'WHERE id_categoria = ' . $id;
+            $sql .= ' WHERE id_categoria = ' . $id;
         }
         $resultado = $conexao->query($sql);
         $dados = [];
         while($linha = $resultado->fetch_object()){
             $dados[] = $linha;
         }
-        echo json_encode($resultado);
+        echo json_encode($dados);
         break;
     case 'POST':
         // Cadastro no banco
-        $sql = 'INSERT INTO tb_categoria VALUE (2, "'.$input[0]['nm_categoria'].'")';
+        $sql = 'INSERT INTO tb_categoria VALUE (null, "'.$input[0]['nm_categoria'].'")';
         $resultado = $conexao->query($sql);
         echo json_encode($conexao->insert_id);
         break;
