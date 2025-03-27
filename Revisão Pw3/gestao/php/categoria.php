@@ -9,16 +9,55 @@ $id = $_GET['id_categoria'] ?? null;
 switch ($method) {
     //Consulta no Banco
     case 'GET':
-        $sql = 'SELECT * FROM tb_categoria ';
-        if($id>0){
-            $sql .= ' WHERE id_categoria = ' . $id;
+        try {
+            // Verifica se a tabela existe
+            $result = $conexao->query("SHOW TABLES LIKE 'tb_categoria'");
+            if ($result->num_rows == 0) {
+                echo json_encode(["erro" => "Tabela tb_categoria não existe"]);
+                exit;
+            }
+
+            // Consulta SQL modificada para incluir contagem de produtos
+            $sql = "SELECT 
+                        c.id_categoria,
+                        c.nm_categoria,
+                        COUNT(p.id_produto) as quantidade_produtos,
+                        GROUP_CONCAT(p.nm_produto) as produtos
+                    FROM tb_categoria c 
+                    LEFT JOIN tb_produto p ON c.id_categoria = p.id_categoria 
+                    WHERE 1=1";
+                    
+            if($id > 0) {
+                $sql .= " AND c.id_categoria = " . $id;
+            }
+            
+            $sql .= " GROUP BY c.id_categoria, c.nm_categoria ORDER BY c.nm_categoria";
+            
+            $resultado = $conexao->query($sql);
+            
+            if (!$resultado) {
+                echo json_encode(["erro" => "Erro na consulta: " . $conexao->error]);
+                exit;
+            }
+
+            $categorias = array();
+            while ($categoria = $resultado->fetch_assoc()) {
+                $categorias[] = array(
+                    'id_categoria' => $categoria['id_categoria'],
+                    'nm_categoria' => $categoria['nm_categoria'],
+                    'quantidade_produtos' => (int)$categoria['quantidade_produtos'],
+                    'produtos' => $categoria['produtos'] ?? ''
+                );
+            }
+
+            // Log para debug
+            error_log("SQL: " . $sql);
+            error_log("Resultado: " . json_encode($categorias));
+
+            echo json_encode($categorias);
+        } catch (Exception $e) {
+            echo json_encode(["erro" => "Erro: " . $e->getMessage()]);
         }
-        $resultado = $conexao->query($sql);
-        $dados = [];
-        while($linha = $resultado->fetch_object()){
-            $dados[] = $linha;
-        }
-        echo json_encode($dados);
         break;
     case 'POST':
         // Cadastro no banco

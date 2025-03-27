@@ -1,9 +1,26 @@
-Tabela();
+// Verificar login
+fetch('../php/verificar_login.php')
+.catch(error => {
+    console.error('Erro:', error);
+    window.location.href = 'index.html';
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado');
+    Tabela();
+});
 
 var form = document.getElementById('FormProduto');
 
 form.addEventListener('submit', function (e) {
     e.preventDefault(); //Interrompe o carregamento da página
+
+    // Validação da categoria
+    var categoria = document.getElementById('id_categoria').value;
+    if (!categoria) {
+        alert('Por favor, digite uma categoria');
+        return;
+    }
 
     var metodo = 'POST';
     var url = '../php/produto.php';
@@ -37,9 +54,16 @@ form.addEventListener('submit', function (e) {
     })
         .then(resposta => resposta.json())
         .then(function(dados){
-        Tabela();
-        alert('Produto cadastrado com sucesso!');
-    })
+            if (dados.erro) {
+                alert('Erro ao cadastrar produto: ' + dados.erro);
+            } else {
+                Tabela();
+                alert('Produto cadastrado com sucesso!');
+            }
+        })
+        .catch(function(erro) {
+            alert('Erro ao cadastrar produto: ' + erro);
+        });
 
     //Ações após envio
     btn.innerHTML = "Adicionar";
@@ -51,7 +75,6 @@ form.addEventListener('submit', function (e) {
     document.getElementById('vl_produto').value = "";
     document.getElementById('qt_estoque').value = "";
     document.getElementById('ds_produto').value = "";
-
 });
 
 function Tabela(){
@@ -65,8 +88,9 @@ function Tabela(){
                 <tr>
                 <th scope="row">`+dados[i].id_produto+`</th>
                 <td>`+dados[i].nm_produto+`</td>
-                <td>`+dados[i].nm_categoria+`</td>
+                <td>`+dados[i].ds_produto+`</td>
                 <td>R$ `+dados[i].vl_produto+`</td>
+                <td>`+dados[i].nm_categoria+`</td>
                 <td>`+dados[i].qt_estoque+`</td>
                 <td>
                     <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_produto+`)"><i class="bi bi-pencil-square"></i></button>

@@ -52,7 +52,7 @@ function Tabela(){
                 <tr>
                 <th scope="row">`+dados[i].id_categoria+`</th>
                 <td>`+dados[i].nm_categoria+`</td>
-                <td>0</td>
+                <td>`+dados[i].quantidade_produtos+`</td>
                 <td>
                     <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_categoria+`)"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger excluir" onclick="Excluir(`+dados[i].id_categoria+`)"><i class="bi bi-trash-fill"></i></button>

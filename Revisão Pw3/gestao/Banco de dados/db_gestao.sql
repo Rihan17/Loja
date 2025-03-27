@@ -23,6 +23,7 @@ CREATE TABLE tb_produto(
     vl_produto DECIMAL(10,2),
     id_categoria INT,
     id_usuario INT,
+    qt_estoque INT,
     PRIMARY KEY (id_produto),
     FOREIGN KEY (id_categoria) REFERENCES tb_categoria(id_categoria),
     FOREIGN KEY (id_usuario) REFERENCES tb_usuario(id_usuario)
