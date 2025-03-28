@@ -3,29 +3,22 @@ session_start();
 include("conexao.php");
 
 header('Content-Type: application/json');
-
 $input = json_decode(file_get_contents("php://input"), true);
+$method = $_SERVER['REQUEST_METHOD'];
+switch($method){
+case 'POST';
 
-if (isset($input[0]['login']) && isset($input[0]['senha'])) {
-    $login = $input[0]['login'];
-    $senha = $input[0]['senha'];
+    $login = htmlspecialchars($input[0]['nm_login'] );
+    $senha = htmlspecialchars($input[0]['ds_senha']) ;
 
-    $sql = "SELECT * FROM tb_usuario WHERE nm_login = ? AND ds_senha = ?";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bind_param("ss", $login, $senha);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-
-    if ($resultado->num_rows > 0) {
-        $usuario = $resultado->fetch_assoc();
-        $_SESSION['id_usuario'] = $usuario['id_usuario'];
-        $_SESSION['nm_usuario'] = $usuario['nm_usuario'];
-        $_SESSION['nm_login'] = $usuario['nm_login'];
-        echo json_encode(["sucesso" => true, "usuario" => $usuario['nm_usuario']]);
-    } else {
-        echo json_encode(["erro" => "Login ou senha inválidos"]);
+    $sql = 'SELECT * FROM tb_usuario WHERE nm_login = "'.$login.'" AND ds_senha = "'.$senha.'"';
+    $res = $conexao->query($sql);
+    $retorno['error'] = false;
+    if($res->num_rows == 1){
+        $retorno['dados'] = $res->fetch_object();
+    }else{
+        $retorno['error'] = true;
+        $retorno['msg']="usuario e senha invalidos";
     }
-} else {
-    echo json_encode(["erro" => "Dados incompletos"]);
+    echo json_encode($retorno);
 }
-?> 

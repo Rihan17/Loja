@@ -6,9 +6,6 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
-// Log para debug
-error_log("Sessão atual: " . print_r($_SESSION, true));
-
 $usuario = [
     'id' => $_SESSION['id_usuario'],
     'nome' => $_SESSION['nm_usuario'],

@@ -8,12 +8,12 @@ form.addEventListener('submit', function (e) {
     var metodo = 'POST';
     var url = '../php/categoria.php';
     var dados = JSON.stringify([{ nm_categoria: document.getElementById('nm_categoria').value, id_categoria: document.getElementById('id_categoria').value }]);
-    var btn = document.getElementById('btn'); //Botão de envio do formulário
+    var btn = document.getElementById('btn');
 
     if (btn.innerHTML == 'Atualizar') {
-        url += '?id_categoria='+document.getElementById('id_categoria').value;
+        url += '?id_categoria=' + document.getElementById('id_categoria').value;
         metodo = 'PUT';
-        dados = JSON.stringify([{ nm_categoria: document.getElementById('nm_categoria').value, id_categoria: document.getElementById('id_categoria').value}]);
+        dados = JSON.stringify([{ nm_categoria: document.getElementById('nm_categoria').value, id_categoria: document.getElementById('id_categoria').value }]);
     }
 
     fetch(url, {
@@ -22,17 +22,17 @@ form.addEventListener('submit', function (e) {
         body: dados
     })
         .then(resposta => resposta.json())
-        .then(function(dados){
-        Tabela();
-        alert('Categoria cadastrada com sucesso!');
-})
+        .then(function (dados) {
+            Tabela();
+            alert('Categoria cadastrada com sucesso!');
+        })
 
-//Ações após envio
-btn.innerHTML = "Adicionar";
-btn.classList.remove('btn-primary');
-btn.classList.add('btn-danger');
-document.getElementById('nm_categoria').value = "";
-document.getElementById('id_categoria').value = "";
+    //Ações após envio
+    btn.innerHTML = "Adicionar";
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-danger');
+    document.getElementById('nm_categoria').value = "";
+    document.getElementById('id_categoria').value = "";
 
 });
 
@@ -40,57 +40,83 @@ document.getElementById('id_categoria').value = "";
 
 
 
-function Tabela(){
+function Tabela() {
 
     fetch('../php/categoria.php')
-    .then(resposta => resposta.json())
-    .then(function(dados){
-        var registros = "";
-        console.table(dados);
-        for(var i=0; i<dados.length; i++){
-            registros += `
+        .then(resposta => resposta.json())
+        .then(function (dados) {
+            var registros = "";
+            console.table(dados);
+            for (var i = 0; i < dados.length; i++) {
+                registros += `
                 <tr>
-                <th scope="row">`+dados[i].id_categoria+`</th>
-                <td>`+dados[i].nm_categoria+`</td>
-                <td>`+dados[i].quantidade_produtos+`</td>
+                <th scope="row">`+ dados[i].id_categoria + `</th>
+                <td>`+ dados[i].nm_categoria + `</td>
+                <td>`+ dados[i].quantidade_produtos + `</td>
                 <td>
-                    <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_categoria+`)"><i class="bi bi-pencil-square"></i></button>
-                    <button class="btn btn-danger excluir" onclick="Excluir(`+dados[i].id_categoria+`)"><i class="bi bi-trash-fill"></i></button>
+                    <button class="btn btn-warning" onclick="Atualizar(`+ dados[i].id_categoria + `)"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-danger excluir" onclick="Excluir(`+ dados[i].id_categoria + `)"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
-        }
-        document.getElementById('tabela').innerHTML = registros;
-    });    
+            }
+            document.getElementById('tabela').innerHTML = registros;
+        });
 
-    
+
 }
 
-    //Ação do botão excluir
+//Ação do botão excluir
 
-    function Atualizar(id_categoria){
-        fetch('../php/categoria.php?id_categoria='+id_categoria,{
-            method: 'GET'
-        })
+function Atualizar(id_categoria) {
+    fetch('../php/categoria.php?id_categoria=' + id_categoria, {
+        method: 'GET'
+    })
         .then(resposta => resposta.json())
-        .then(function(dados){
+        .then(function (dados) {
             var id = document.getElementById('id_categoria');
             var nome = document.getElementById('nm_categoria');
             var btn = document.getElementById('btn');
-    
+
             btn.innerHTML = "Atualizar";
             btn.classList.remove('btn-danger');
             btn.classList.add('btn-primary');
-    
+
             id.value = dados[0].id_categoria;
             nome.value = dados[0].nm_categoria;
             nome.focus();
         });
-    }
-    
-    function Excluir(id_categoria){
-        fetch('../php/categoria.php?id_categoria='+id_categoria,{
-            method: 'DELETE'
-        })
+}
+
+function Excluir(id_categoria) {
+    fetch('../php/categoria.php?id_categoria=' + id_categoria, {
+        method: 'DELETE'
+    })
         .then(resposta => resposta.json())
         .then(dados => Tabela());
-    }
+}
+
+// Verificar login e carregar dados do perfil
+fetch('../php/perfil.php')
+    .then(response => {
+        console.log('Status da resposta:', response.status);
+        if (!response.ok) {
+            throw new Error('Erro na resposta: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Dados do perfil:', data);
+        if (data.erro) {
+            alert(data.erro);
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Preenche os campos com os dados do usuário
+        document.getElementById('nome_usuario').textContent = data.usuario.nome;
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao carregar dados do perfil');
+        window.location.href = 'index.html';
+    }); 

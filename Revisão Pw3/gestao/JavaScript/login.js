@@ -1,6 +1,10 @@
-document.getElementById('entrar').addEventListener('click', function() {
-    var login = document.getElementById('login').value;
-    var senha = document.getElementById('senha').value;
+var login = document.getElementById('login');
+var senha = document.getElementById('senha');
+var formLogin = document.getElementById('form-login');
+
+formLogin.addEventListener('click', function (e) {
+
+    e.preventDefault();
 
     if (!login || !senha) {
         alert('Por favor, preencha todos os campos');
@@ -13,20 +17,18 @@ document.getElementById('entrar').addEventListener('click', function() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify([{
-            login: login,
-            senha: senha
+            nm_login: login.value,
+            ds_senha: senha.value
         }])
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.sucesso) {
-            window.location.href = 'perfil.html';
-        } else {
-            alert(data.erro || 'Erro ao fazer login');
-        }
-    })
-    .catch(error => {
-        console.error('Erro:', error);
-        alert('Erro ao fazer login');
-    });
+        .then(response => response.json())
+        .then(function(dados){
+                dados = dados.dados;
+                console.log(dados);
+                localStorage.setItem('nome', dados.nm_usuario);
+                localStorage.setItem('login', dados.nm_login);
+                localStorage.setItem('senha', dados.ds_senha);
+                window.location.href = 'perfil.html';
+
+        })
 }); 

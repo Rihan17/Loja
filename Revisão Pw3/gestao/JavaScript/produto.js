@@ -32,7 +32,7 @@ form.addEventListener('submit', function (e) {
         qt_estoque: document.getElementById('qt_estoque').value,
         ds_produto: document.getElementById('ds_produto').value
     }]);
-    var btn = document.getElementById('btn'); //Botão de envio do formulário
+    var btn = document.getElementById('btn');
 
     if (btn.innerHTML == 'Atualizar') {
         url += '?id_produto='+document.getElementById('id_produto').value;
@@ -78,6 +78,18 @@ form.addEventListener('submit', function (e) {
 });
 
 function Tabela(){
+
+    fetch('../php/categoria.php')
+    .then(resposta => resposta.json())
+    .then(function(dados){
+        var categoria = "";
+        for(var i = 0; i < dados.length; i++){
+            categoria +=`
+            <option value="${dados[i].id_categoria}">${dados[i].nm_categoria}</option>`;
+            document.getElementById('id_categoria').innerHTML = categoria;
+        }
+    })
+
     fetch('../php/produto.php')
     .then(resposta => resposta.json())
     .then(function(dados){
@@ -137,3 +149,29 @@ function Excluir(id_produto){
     .then(resposta => resposta.json())
     .then(dados => Tabela());
 }
+
+// Verificar login e carregar dados do perfil
+fetch('../php/perfil.php')
+.then(response => {
+    console.log('Status da resposta:', response.status);
+    if (!response.ok) {
+        throw new Error('Erro na resposta: ' + response.status);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Dados do perfil:', data);
+    if (data.erro) {
+        alert(data.erro);
+        window.location.href = 'index.html';
+        return;
+    }
+
+    // Preenche os campos com os dados do usuário
+    document.getElementById('nome_usuario').textContent = data.usuario.nome;
+})
+.catch(error => {
+    console.error('Erro:', error);
+    alert('Erro ao carregar dados do perfil');
+    window.location.href = 'index.html';
+}); 
