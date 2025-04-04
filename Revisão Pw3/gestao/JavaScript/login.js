@@ -1,3 +1,4 @@
+var url = '../php/login.php';
 var login = document.getElementById('login');
 var senha = document.getElementById('senha');
 var formLogin = document.getElementById('form-login');
@@ -11,7 +12,7 @@ formLogin.addEventListener('click', function (e) {
         return;
     }
 
-    fetch('../php/login.php', {
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

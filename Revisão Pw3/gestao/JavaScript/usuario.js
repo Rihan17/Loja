@@ -1,4 +1,4 @@
-var url = '../php/user.php';
+var url = '../php/login.php';
 var btnEntrar = document.getElementById('entrar');
 var login = document.getElementById('id_usuario');
 var senha = document.getElementById('ds_senha');

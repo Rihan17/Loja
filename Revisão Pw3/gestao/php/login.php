@@ -1,5 +1,4 @@
 <?php
-session_start();
 include("conexao.php");
 
 header('Content-Type: application/json');

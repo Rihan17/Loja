@@ -1,19 +1,11 @@
 <?php
-session_start();
+
 include("conexao.php");
 
 header('Content-Type: application/json');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $input = json_decode(file_get_contents("php://input"), true);
-
-// Verifica se o usuário está logado
-if (!isset($_SESSION['id_usuario'])) {
-    echo json_encode(["erro" => "Usuário não está logado"]);
-    exit;
-}
-
-$id_usuario = $_SESSION['id_usuario'];
 
 switch ($method) {
     case 'GET':
@@ -26,10 +18,9 @@ switch ($method) {
             $sql .= " AND p.id_produto = " . $_GET['id_produto'];
         }
         
-        $stmt = $conexao->prepare($sql);
-        $stmt->bind_param("i", $id_usuario);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
+        $resultado = $conexao->prepare($sql);
+        $resultado->execute();
+        $resultado = $resultado->get_result();
         
         $dados = [];
         while ($linha = $resultado->fetch_object()) {
@@ -43,8 +34,8 @@ switch ($method) {
         $sql = "INSERT INTO tb_produto (nm_produto, ds_produto, vl_produto, id_categoria, id_usuario, qt_estoque) 
                 VALUES (?, ?, ?, ?, ?, ?)";
         
-        $stmt = $conexao->prepare($sql);
-        $stmt->bind_param("ssdiis", 
+        $resultado = $conexao->prepare($sql);
+        $resultado->bind_param("ssdiis", 
             $input[0]['nm_produto'],
             $input[0]['ds_produto'],
             $input[0]['vl_produto'],
@@ -53,7 +44,7 @@ switch ($method) {
             $input[0]['qt_estoque']
         );
         
-        if ($stmt->execute()) {
+        if ($resultado->execute()) {
             echo json_encode(["sucesso" => true, "id" => $conexao->insert_id]);
         } else {
             echo json_encode(["erro" => "Erro ao cadastrar produto: " . $conexao->error]);
@@ -70,8 +61,8 @@ switch ($method) {
                     qt_estoque = ? 
                 WHERE id_produto = ? AND id_usuario = ?";
         
-        $stmt = $conexao->prepare($sql);
-        $stmt->bind_param("ssdiisi", 
+        $resultado = $conexao->prepare($sql);
+        $resultado->bind_param("ssdiisi", 
             $input[0]['nm_produto'],
             $input[0]['ds_produto'],
             $input[0]['vl_produto'],
@@ -81,7 +72,7 @@ switch ($method) {
             $id_usuario
         );
         
-        if ($stmt->execute()) {
+        if ($resultado->execute()) {
             echo json_encode(["sucesso" => true]);
         } else {
             echo json_encode(["erro" => "Erro ao atualizar produto: " . $conexao->error]);
@@ -91,10 +82,9 @@ switch ($method) {
     case 'DELETE':
         // Excluir um Registro
         $sql = "DELETE FROM tb_produto WHERE id_produto = ? AND id_usuario = ?";
-        $stmt = $conexao->prepare($sql);
-        $stmt->bind_param("ii", $_GET['id_produto'], $id_usuario);
+        $resultado = $conexao->prepare($sql);
         
-        if ($stmt->execute()) {
+        if ($resultado->execute()) {
             echo json_encode(["sucesso" => true]);
         } else {
             echo json_encode(["erro" => "Erro ao excluir produto: " . $conexao->error]);

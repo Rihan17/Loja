@@ -1,10 +1,3 @@
-// Verificar login
-fetch('../php/verificar_login.php')
-.catch(error => {
-    console.error('Erro:', error);
-    window.location.href = 'index.html';
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM carregado');
     Tabela();
@@ -14,13 +7,6 @@ var form = document.getElementById('FormProduto');
 
 form.addEventListener('submit', function (e) {
     e.preventDefault(); //Interrompe o carregamento da página
-
-    // Validação da categoria
-    var categoria = document.getElementById('id_categoria').value;
-    if (!categoria) {
-        alert('Por favor, digite uma categoria');
-        return;
-    }
 
     var metodo = 'POST';
     var url = '../php/produto.php';
@@ -105,6 +91,7 @@ function Tabela(){
                 <td>`+dados[i].nm_categoria+`</td>
                 <td>`+dados[i].qt_estoque+`</td>
                 <td>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalFotos" id="1"><i class="bi bi-camera-fill"></i></button>
                     <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_produto+`)"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger excluir" onclick="Excluir(`+dados[i].id_produto+`)"><i class="bi bi-trash-fill"></i></button>
                 </td>
@@ -150,28 +137,33 @@ function Excluir(id_produto){
     .then(dados => Tabela());
 }
 
-// Verificar login e carregar dados do perfil
-fetch('../php/perfil.php')
-.then(response => {
-    console.log('Status da resposta:', response.status);
-    if (!response.ok) {
-        throw new Error('Erro na resposta: ' + response.status);
-    }
-    return response.json();
-})
-.then(data => {
-    console.log('Dados do perfil:', data);
-    if (data.erro) {
-        alert(data.erro);
-        window.location.href = 'index.html';
-        return;
-    }
+//Selecionar a foto
 
-    // Preenche os campos com os dados do usuário
-    document.getElementById('nome_usuario').textContent = data.usuario.nome;
-})
-.catch(error => {
-    console.error('Erro:', error);
-    alert('Erro ao carregar dados do perfil');
-    window.location.href = 'index.html';
-}); 
+const galeria = document.getElementById('previas');
+
+document.getElementById('img').addEventListener('change', function(event){
+
+    const files = event.target.files;
+
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = "100px";
+                galeria.appendChild(img);
+            };
+                                                                                                            
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+var btnSalvar = document.getElementById('salvarFoto');
+
+btnSalvar.addEventListener('submit', function(e){
+    e.preventDefault();
+    alert("Quase lá");
+});
