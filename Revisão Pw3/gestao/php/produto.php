@@ -9,18 +9,16 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 switch ($method) {
     case 'GET':
-        $sql = "SELECT p.*, c.nm_categoria 
+        $sql = 'SELECT p.*, c.nm_categoria 
                 FROM tb_produto p 
-                LEFT JOIN tb_categoria c ON p.id_categoria = c.id_categoria 
-                WHERE p.id_usuario = ?";
+                INNER JOIN tb_categoria c ON p.id_categoria = c.id_categoria';
         
         if (isset($_GET['id_produto'])) {
             $sql .= " AND p.id_produto = " . $_GET['id_produto'];
         }
         
-        $resultado = $conexao->prepare($sql);
-        $resultado->execute();
-        $resultado = $resultado->get_result();
+        $resultado = $conexao->query
+        ($sql);
         
         $dados = [];
         while ($linha = $resultado->fetch_object()) {
@@ -31,46 +29,30 @@ switch ($method) {
 
     case 'POST':
         // Cadastro no banco
-        $sql = "INSERT INTO tb_produto (nm_produto, ds_produto, vl_produto, id_categoria, id_usuario, qt_estoque) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = 'INSERT INTO tb_produto
+                VALUES ("'.$input[0]['nm_produto'].'",
+            "'.$input[0]['ds_produto'].'",
+            "'.$input[0]['vl_produto'].'",
+            "'.$input[0]['id_categoria'].'",
+            "'.$input[0]['qt_estoque'].'")';
         
         $resultado = $conexao->prepare($sql);
-        $resultado->bind_param("ssdiis", 
-            $input[0]['nm_produto'],
-            $input[0]['ds_produto'],
-            $input[0]['vl_produto'],
-            $input[0]['id_categoria'],
-            $id_usuario,
-            $input[0]['qt_estoque']
-        );
         
-        if ($resultado->execute()) {
-            echo json_encode(["sucesso" => true, "id" => $conexao->insert_id]);
-        } else {
-            echo json_encode(["erro" => "Erro ao cadastrar produto: " . $conexao->error]);
-        }
+        $resultado = $conexao->query($sql);
+        echo json_encode($conexao->insert_id);
         break;
 
     case 'PUT':
         // Atualizar um Registro
-        $sql = "UPDATE tb_produto 
-                SET nm_produto = ?, 
-                    ds_produto = ?, 
-                    vl_produto = ?, 
-                    id_categoria = ?, 
-                    qt_estoque = ? 
-                WHERE id_produto = ? AND id_usuario = ?";
+        $sql = 'UPDATE tb_produto 
+                SET "'.$input[0]['nm_produto'].'",
+            "'.$input[0]['ds_produto'].'",
+            "'.$input[0]['vl_produto'].'",
+            "'.$input[0]['id_categoria'].'",
+            "'.$input[0]['qt_estoque'].'") 
+                WHERE id_produto = "'.$input[0]['id_produto'].'"';
         
         $resultado = $conexao->prepare($sql);
-        $resultado->bind_param("ssdiisi", 
-            $input[0]['nm_produto'],
-            $input[0]['ds_produto'],
-            $input[0]['vl_produto'],
-            $input[0]['id_categoria'],
-            $input[0]['qt_estoque'],
-            $input[0]['id_produto'],
-            $id_usuario
-        );
         
         if ($resultado->execute()) {
             echo json_encode(["sucesso" => true]);

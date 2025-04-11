@@ -2,11 +2,11 @@
 fetch('../php/perfil.php')
 .then(dados => {
     // Preenche as estatísticas
-    document.getElementById('total_produtos').textContent = dados[0].estatisticas.produtos;
-    document.getElementById('total_categorias').textContent = dados[0].estatisticas.categorias;
+    document.getElementById('total_produtos').textContent = dados.estatisticas.produtos;
+    document.getElementById('total_categorias').textContent = dados.estatisticas.categorias;
 })
 .catch(error => {
-    console.error('Erro:', error);
+    console.log(error);
     alert('Erro ao carregar dados do perfil');
     window.location.href = 'index.html';
 }); 

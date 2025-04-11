@@ -91,13 +91,14 @@ function Tabela(){
                 <td>`+dados[i].nm_categoria+`</td>
                 <td>`+dados[i].qt_estoque+`</td>
                 <td>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalFotos" id="1"><i class="bi bi-camera-fill"></i></button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalFotos" id="${dados[i].id_produto}"  onclick="getId(this)"><i class="bi bi-camera-fill"></i></button>
                     <button class="btn btn-warning" onclick="Atualizar(`+dados[i].id_produto+`)"><i class="bi bi-pencil-square"></i></button>
                     <button class="btn btn-danger excluir" onclick="Excluir(`+dados[i].id_produto+`)"><i class="bi bi-trash-fill"></i></button>
                 </td>
             </tr>`;
         }
         document.getElementById('tabela').innerHTML = registros;
+        console.log(registros);
     });    
 }
 
@@ -141,7 +142,7 @@ function Excluir(id_produto){
 
 const galeria = document.getElementById('previas');
 
-document.getElementById('img').addEventListener('change', function(event){
+document.getElementById('imagens').addEventListener('change', function(event){
 
     const files = event.target.files;
 
@@ -163,7 +164,40 @@ document.getElementById('img').addEventListener('change', function(event){
 
 var btnSalvar = document.getElementById('salvarFoto');
 
-btnSalvar.addEventListener('submit', function(e){
-    e.preventDefault();
-    alert("Quase lá");
+btnSalvar.addEventListener('click', function(e){
+    
+    var idProduto = document.getElementById('idProduto');
+    var imagens = document.getElementById('imagens').files;
+
+    const formData = new FormData();
+
+    formData.append('idProduto', idProduto.value);
+
+    if(imagens.length>0){
+        for (let i = 0;i < imagens.length; i++){
+            formData.append('imagens[]', imagens[i]);
+        }
+    
+
+    fetch('../php/foto.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("Fotos Enviadas !!");
+    })
+    .catch(error => {
+        alert('Erro no envio:', error);
+        alert('Erro ao enviar as imagens !');
+    });
+
+    }else {
+        alert("Selecione as imagens !")
+    }
+
 });
+
+function getId(campo){
+    document.getElementById('idProduto').value = campo.getAttribute('id');
+}
