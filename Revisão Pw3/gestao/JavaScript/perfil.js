@@ -2,8 +2,8 @@
 fetch('../php/perfil.php')
 .then(dados => {
     // Preenche as estatísticas
-    document.getElementById('total_produtos').textContent = dados.estatisticas.produtos;
-    document.getElementById('total_categorias').textContent = dados.estatisticas.categorias;
+    // document.getElementById('total_produtos').textContent = dados.estatisticas.produtos;
+    // document.getElementById('total_categorias').textContent = dados.estatisticas.categorias;
 })
 .catch(error => {
     console.log(error);
